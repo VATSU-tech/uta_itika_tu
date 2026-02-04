@@ -48,14 +48,16 @@
       --white: #222;
     }
     body {
+      overflow: hidden;
       background-color: var(--background);
       color: var(--white);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      position: relative; /* Needed for absolute positioning of children */
     }
-    div {
+    .container {
       display: flex;
       flex-direction: column;
       gap: 1rem;
@@ -67,9 +69,8 @@
         var(--color2) 0 0 50rem,
         var(--white) 2px 2px 0.5rem,
         var(--color3) 0 0 7rem inset;
-    }
-    @keyframes identifier {
-      
+      z-index: 10; /* Ensure content is above bubbles */
+      position: relative;
     }
     h1 {
       color: var(--background);
@@ -79,15 +80,16 @@
       display: flex;
       gap: 10px;
       padding: 0 20%;
+      justify-content: center;
     }
     button {
-      /* flex: 1; */
       width: 100px;
       background-color: var(--background);
       border: 1px solid var(--color2);
       padding: 1rem;
       border-radius: 2rem;
       color: var(--white);
+      position: relative; /* For movement */
     }
     button:hover {
       border-color: var(--color2);
@@ -95,12 +97,12 @@
       box-shadow: var(--color2) 0 0 1rem inset;
     }
     .hover {
-      position: absolute;
-      border: 1px solid var(--white);
+      position: absolute; /* Allows free movement */
     }
     footer {
       position: absolute;
       bottom: 10px;
+      z-index: 10;
     }
     a {
       text-decoration: none;
@@ -109,10 +111,33 @@
     a:hover {
       color: var(--white);
     }
+
+    /* Bubble Styles */
+    .bulle {
+      position: absolute;
+      bottom: -100px; /* Start below screen */
+      animation: rise linear forwards; /* 'forwards' helps debugging, but we remove element anyway */
+      z-index: 1; /* Behind content */
+      opacity: 0.7;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-120vh) rotate(360deg); /* Move up past viewport */
+        opacity: 0;
+      }
+    }
   </style>
   <body>
-    <div>
-      <h1>Do you realy love me ?</h1>
+    <div class="container">
+      <h1>Veut tu etre ma valentine ?</h1>
       <section>
         <button id="yes">Yes</button>
         <button id="button">No</button>
@@ -126,20 +151,72 @@
   </body>
   <script>
     const btn = document.getElementById("button");
-    btn.addEventListener("mouseover", () => {
-      btn.style.left = Math.random() * 90 + "%";
-      btn.style.top = Math.random() * 90 + "%";
+    const container = document.querySelector(".container");
 
-      btn.addEventListener("click", () => {
+    // Make the button run away
+    btn.addEventListener("mouseover", moveButton);
+    btn.addEventListener("click", moveButton); // Also move on click if they manage to catch it
+
+    function moveButton() {
+      // Add absolute positioning class if not present to allow free movement
+      if (!btn.classList.contains("hover")) {
         btn.classList.add("hover");
-        btn.style.left = Math.random() * 90 + "%";
-        btn.style.top = Math.random() * 90 + "%";
-      });
-    });
+        // Move it out of the layout flow initially so it doesn't jump weirdly
+        // We append it to body so it can move anywhere on screen freely,
+        // or keep in container but use fixed positioning relative to viewport.
+        // Keeping in section might restrict it if we use percentages.
+        // Let's keep it simple: relative movement within viewport.
+        btn.style.position = "fixed";
+      }
+
+      const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+      const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+
+      btn.style.left = x + "px";
+      btn.style.top = y + "px";
+    }
 
     document.getElementById("yes").addEventListener("click", () => {
-      document.querySelector("div").innerHTML =
+      document.querySelector(".container").innerHTML =
         "<h1>Thank you to love me realy !</h1>";
+      // Maybe trigger a burst of bubbles?
+      for (let i = 0; i < 50; i++) {
+        setTimeout(prodBulles, i * 50);
+      }
     });
+
+    const prodBulles = () => {
+      const bulle = document.createElement("img");
+      bulle.src = "icon.svg";
+      bulle.classList.add("bulle");
+
+      // Random Size
+      const size = Math.random() * 50 + 20 + "px"; // 20px to 70px
+      bulle.style.width = size;
+      bulle.style.height = size; // maintain aspect ratio if square svg
+
+      // Random Horizontal Position
+      bulle.style.left = Math.random() * 100 + "%";
+
+      // Random Animation Duration (Speed)
+      const duration = Math.random() * 5 + 3; // 3s to 8s
+      bulle.style.animationDuration = duration + "s";
+
+      // Random Delay
+      bulle.style.animationDelay = Math.random() * 2 + "s";
+
+      document.body.appendChild(bulle);
+
+      // Cleanup after animation
+      setTimeout(
+        () => {
+          bulle.remove();
+        },
+        (duration + 2) * 1000,
+      ); // Wait for duration + delay
+    };
+
+    // Create a bubble every 500ms
+    setInterval(prodBulles, 500);
   </script>
 </html>
