@@ -42,10 +42,10 @@
       transition: 0.5s;
     }
     :root {
-      --background: #dedede;
-      --color2: #333;
-      --color3: #33333375;
-      --white: #222;
+      --background: #ffb8b8;
+      --color2: #ff6767;
+      --color3: #ff000075;
+      --white: #ff0000;
     }
     body {
       overflow: hidden;
@@ -73,8 +73,17 @@
       position: relative;
     }
     h1 {
-      color: var(--background);
-      text-shadow: var(--color2) 0 0 5px;
+      color:#ff6060;
+      animation: fadenRed 2s ease-in-out infinite;
+    }
+    @keyframes fadenRed {
+      0%,100%{
+      text-shadow: #dee 0 0 5px;
+      }
+      50%{
+      text-shadow: #ff6060 0 0 1px;
+      }
+      
     }
     section {
       display: flex;
@@ -106,10 +115,11 @@
     }
     a {
       text-decoration: none;
-      color: var(--color3);
+      opacity: .2;
+      color: var(--white);
     }
     a:hover {
-      color: var(--white);
+      opacity: 1;
     }
 
     /* Bubble Styles */
@@ -186,8 +196,8 @@
     });
 
     const prodBulles = () => {
-      const bulle = document.createElement("img");
-      bulle.src = "icon.svg";
+      const bulle = document.createElement("span");
+      bulle.innerHTML = "<i class='fa-solid fa-heart'></i>";
       bulle.classList.add("bulle");
 
       // Random Size
@@ -195,11 +205,10 @@
       bulle.style.width = size;
       bulle.style.height = size; // maintain aspect ratio if square svg
 
-      // Random Horizontal Position
       bulle.style.left = Math.random() * 100 + "%";
 
       // Random Animation Duration (Speed)
-      const duration = Math.random() * 5 + 3; // 3s to 8s
+      const duration = Math.random() * 15 + 10; // 3s to 8s
       bulle.style.animationDuration = duration + "s";
 
       // Random Delay
@@ -215,8 +224,6 @@
         (duration + 2) * 1000,
       ); // Wait for duration + delay
     };
-
-    // Create a bubble every 500ms
-    setInterval(prodBulles, 500);
+    setInterval(prodBulles, 1000);
   </script>
 </html>
