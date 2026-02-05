@@ -1,158 +1,229 @@
 <!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <title>Valentine 💘</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="uta itika tu" />
+    <meta name="keywords" content="uta itika tu" />
+    <meta name="author" content="VATSU" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="var(--background)" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-TileColor" content="var(--background)" />
+    <meta name="msapplication-TileImage" content="icon.svg" />
+    <link rel="icon" href="icon.svg" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <title>uta itika tu</title>
+  </head>
   <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        "Open Sans",
+        "Helvetica Neue",
+        sans-serif;
+      transition: 0.5s;
+    }
+    :root {
+      --background: #ffb8b8;
+      --color2: #ff6767;
+      --color3: #ff000075;
+      --white: #ff0000;
+    }
     body {
-      background: #ffb8b8;
-      height: 100vh;
+      overflow: hidden;
+      background-color: var(--background);
+      color: var(--white);
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: system-ui, sans-serif;
-      overflow: hidden;
+      height: 100vh;
+      position: relative; /* Needed for absolute positioning of children */
     }
-
     .container {
-      background: rgba(255,255,255,.15);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background-color: transparent;
       padding: 2rem;
       border-radius: 2rem;
       text-align: center;
-      box-shadow: 0 0 4rem #ff6767;
+      box-shadow:
+        var(--color2) 0 0 50rem,
+        var(--white) 2px 2px 0.5rem,
+        var(--color3) 0 0 7rem inset;
+      z-index: 10; /* Ensure content is above bubbles */
+      position: relative;
     }
-
-    h1 { color: #ff4040; }
-
+    h1 {
+      color:#ff6060;
+      animation: fadenRed 2s ease-in-out infinite;
+    }
+    @keyframes fadenRed {
+      0%,100%{
+      text-shadow: #dee 0 0 5px;
+      }
+      50%{
+      text-shadow: #ff6060 0 0 1px;
+      }
+      
+    }
+    section {
+      display: flex;
+      gap: 10px;
+      padding: 0 20%;
+      justify-content: center;
+    }
     button {
-      padding: 1rem 2rem;
+      width: 100px;
+      background-color: var(--background);
+      border: 1px solid var(--color2);
+      padding: 1rem;
       border-radius: 2rem;
-      border: none;
+      color: var(--white);
+      position: relative; /* For movement */
+    }
+    button:hover {
+      border-color: var(--color2);
       cursor: pointer;
-      margin: .5rem;
-      font-size: 1rem;
+      box-shadow: var(--color2) 0 0 1rem inset;
+    }
+    .hover {
+      position: absolute; /* Allows free movement */
+    }
+    footer {
+      position: absolute;
+      bottom: 10px;
+      z-index: 10;
+    }
+    a {
+      text-decoration: none;
+      opacity: .2;
+      color: var(--white);
+    }
+    a:hover {
+      opacity: 1;
     }
 
-    #yes { background: #ff4040; color: white; }
-    #no  { background: #ffd1d1; }
+    /* Bubble Styles */
+    .bulle {
+      position: absolute;
+      bottom: -100px; /* Start below screen */
+      animation: rise linear forwards; /* 'forwards' helps debugging, but we remove element anyway */
+      z-index: 1; /* Behind content */
+      opacity: 0.7;
+    }
 
-    #export {
-      margin-top: 1rem;
-      font-size: .8rem;
+    @keyframes rise {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-120vh) rotate(360deg); /* Move up past viewport */
+        opacity: 0;
+      }
     }
   </style>
-</head>
+  <body>
+    <div class="container">
+      <h1>Veut tu etre ma valentine ?</h1>
+      <section>
+        <button id="yes">Yes</button>
+        <button id="button">No</button>
+      </section>
+    </div>
+    <footer>
+      <a href="https://github.com/VATSU-tech/uta_itika_tu.git"
+        ><i class="fa-brands fa-github"></i> VATSU-tech</a
+      >
+    </footer>
+  </body>
+  <script>
+    const btn = document.getElementById("button");
+    const container = document.querySelector(".container");
 
-<body>
+    // Make the button run away
+    btn.addEventListener("mouseover", moveButton);
+    btn.addEventListener("click", moveButton); // Also move on click if they manage to catch it
 
-<div class="container">
-  <h1 id="question"></h1>
+    function moveButton() {
+      // Add absolute positioning class if not present to allow free movement
+      if (!btn.classList.contains("hover")) {
+        btn.classList.add("hover");
+        // Move it out of the layout flow initially so it doesn't jump weirdly
+        // We append it to body so it can move anywhere on screen freely,
+        // or keep in container but use fixed positioning relative to viewport.
+        // Keeping in section might restrict it if we use percentages.
+        // Let's keep it simple: relative movement within viewport.
+        btn.style.position = "fixed";
+      }
 
-  <button id="yes">Oui 💖</button>
-  <button id="no">Non 😅</button>
+      const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+      const y = Math.random() * (window.innerHeight - btn.offsetHeight);
 
-  <br />
-  <button id="export">Exporter le JSON</button>
-</div>
+      btn.style.left = x + "px";
+      btn.style.top = y + "px";
+    }
 
-<script>
-/* ================================
-   1. Lire les paramètres du lien
-================================ */
-const params = new URLSearchParams(window.location.search);
-const to   = params.get("to")   || "Ma Valentine";
-const from = params.get("from") || "Quelqu’un";
+    document.getElementById("yes").addEventListener("click", () => {
+      document.querySelector(".container").innerHTML =
+        "<h1>Thank you to love me realy !</h1>";
+      // Maybe trigger a burst of bubbles?
+      for (let i = 0; i < 50; i++) {
+        setTimeout(prodBulles, i * 50);
+      }
+    });
 
-/* ================================
-   2. Afficher la question
-================================ */
-document.getElementById("question").textContent =
-  `${to}, veux-tu être ma Valentine 💘 ?`;
+    const prodBulles = () => {
+      const bulle = document.createElement("img");
+      bulle.src = "/icon.svg";
+      bulle.classList.add("bulle");
 
-/* ================================
-   3. Charger le JSON existant
-   (simulation fetch)
-================================ */
-async function loadResponses() {
-  const stored = localStorage.getItem("valentineResponses");
-  if (!stored) return {};
+      // Random Size
+      const size = Math.random() * 50 + 20 + "px"; // 20px to 70px
+      bulle.style.width = size;
+      bulle.style.height = size; // maintain aspect ratio if square svg
 
-  // Simule un fetch depuis un "fichier"
-  const blob = new Blob([stored], { type: "application/json" });
-  const url  = URL.createObjectURL(blob);
+      bulle.style.left = Math.random() * 100 + "%";
 
-  const res = await fetch(url);
-  const json = await res.json();
+      // Random Animation Duration (Speed)
+      const duration = Math.random() * 15 + 10; // 3s to 8s
+      bulle.style.animationDuration = duration + "s";
 
-  URL.revokeObjectURL(url);
-  return json;
-}
+      // Random Delay
+      bulle.style.animationDelay = Math.random() * 2 + "s";
 
-/* ================================
-   4. Sauvegarder une réponse
-================================ */
-async function saveResponse(answer) {
-  const data = await loadResponses();
+      document.body.appendChild(bulle);
 
-  data[to] = {
-    from,
-    answer,
-    date: new Date().toISOString()
-  };
-
-  localStorage.setItem(
-    "valentineResponses",
-    JSON.stringify(data, null, 2)
-  );
-}
-
-/* ================================
-   5. Bouton YES
-================================ */
-document.getElementById("yes").onclick = async () => {
-  await saveResponse("yes");
-
-  document.querySelector(".container").innerHTML =
-    `<h1>Merci ${to} 💖</h1>
-     <p>Tu viens de faire battre un cœur 🫶</p>`;
-};
-
-/* ================================
-   6. Bouton NO (fuit 😄)
-================================ */
-document.getElementById("no").onmouseover = e => {
-  e.target.style.position = "absolute";
-  e.target.style.left = Math.random() * 80 + "%";
-  e.target.style.top  = Math.random() * 80 + "%";
-};
-
-/* ================================
-   7. Quitter sans répondre
-================================ */
-window.addEventListener("beforeunload", async () => {
-  const data = await loadResponses();
-  if (!data[to]) await saveResponse("left");
-});
-
-/* ================================
-   8. Export JSON
-================================ */
-document.getElementById("export").onclick = async () => {
-  const data = await loadResponses();
-
-  const blob = new Blob(
-    [JSON.stringify(data, null, 2)],
-    { type: "application/json" }
-  );
-
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "valentine-responses.json";
-  a.click();
-};
-</script>
-
-</body>
+      // Cleanup after animation
+      setTimeout(
+        () => {
+          bulle.remove();
+        },
+        (duration + 2) * 1000,
+      ); // Wait for duration + delay
+    };
+    setInterval(prodBulles, 1000);
+  </script>
 </html>
