@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="uta itika tu" />
@@ -10,7 +10,7 @@
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-TileColor" content="var(--background)" />
     <meta name="msapplication-TileImage" content="icon.svg" />
-    <link rel="icon" href="./icon.svg" />
+    <link rel="icon" href="icon.svg" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
@@ -53,7 +53,7 @@
       color: var(--white);
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items:center;
       height: 100vh;
       position: relative; /* Needed for absolute positioning of children */
     }
@@ -72,6 +72,21 @@
         var(--color3) 0 0 7rem inset;
       z-index: 10; /* Ensure content is above bubbles */
       position: relative;
+    }
+    .message{
+      animation: header 2s ease-in-out;
+    }
+    @keyframes header {
+      0%,100%{
+        top: -2rem;
+      }
+      10%,70%{
+        top: 1rem;
+      }
+    }
+    .header{
+      position: absolute;
+      top: -1rem;
     }
     h1 {
       color:#ff6060;
@@ -123,12 +138,6 @@
       opacity: 1;
     }
 
-    .to{
-      color: var(--background);
-      animation:none;
-      text-shadow: 0 0 10px var(--white);
-    }
-
     /* Bubble Styles */
     .bulle {
       position: absolute;
@@ -153,11 +162,12 @@
     }
   </style>
   <body>
+    <div id="header" class="header">header</div>
     <div class="container">
       <h1 id="q">Veut tu etre ma valentine ?</h1>
       <section>
-        <button id="yes" onclick='send("yes")' >Yes</button>
-        <button id="button" onclick="send('no')">No</button>
+        <button id="yes" onclick='send("yes","Merci 💘")' >Yes</button>
+        <button id="button" ">No</button>
       </section>
     </div>
     <footer>
@@ -173,14 +183,57 @@
       document.getElementById("q").innerHTML =
         `<span class='to'>${to}</span>` + ", veux-tu être ma Valentine ?";
 
-      function send(answer) {
+      function send(answer,message) {
         fetch("/api/respond", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ to, from, answer }),
-        }).then(() => (document.querySelector('.container').innerHTML = "<h2>Merci 💘</h2>"));
+        }).then(() => (document.querySelector('.container').innerHTML = "<h2>"+message+"</h2>"));
+      }
+    const btn = document.getElementById("button");
+    const msg = document.getElementById('header');
+    const root = document.documentElement;
+    const container = document.querySelector(".container");
+
+    const messages = ['Fais pas cet erreur','Derniere chance']
+
+    btn.addEventListener("click", moveButton); // Also move on click if they manage to catch it
+
+    function moveButton() {
+
+      if(messages.length !== 0){
+        msg.textContent = messages[0]  
+        messages.splice(0,1)
+      }
+      else{
+        send('no','Tu me rend vraiment triste')
+        root.style.setProperty('--background', '#444')
+      }
+      
+
+      msg.classList.add('message')
+      // msg.style.animation = 'header 2s ease-in-out'
+      setTimeout(()=> msg.classList.remove('message'),2000)
+      if (!btn.classList.contains("hover")) {
+        btn.classList.add("hover");
+        btn.style.position = "fixed";
       }
 
+      const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+      const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+
+      btn.style.left = x + "px";
+      btn.style.top = y + "px";
+    }
+
+    document.getElementById("yes").addEventListener("click", () => {
+      document.querySelector(".container").innerHTML =
+        "<h1>Thank you to love me realy !</h1>";
+      // Maybe trigger a burst of bubbles?
+      for (let i = 0; i < 50; i++) {
+        setTimeout(prodBulles, i * 50);
+      }
+    });
 
     const prodBulles = () => {
       const bulle = document.createElement("img");
@@ -188,14 +241,14 @@
       bulle.classList.add("bulle");
 
       // Random Size
-      const size = Math.random() * 190 + 20 + "px"; // 20px to 70px
+      const size = Math.random() * 50 + 20 + "px"; // 20px to 70px
       bulle.style.width = size;
-      bulle.style.height = size;
+      bulle.style.height = size; // maintain aspect ratio if square svg
 
       bulle.style.left = Math.random() * 100 + "%";
 
       // Random Animation Duration (Speed)
-      const duration = Math.random() * 15 + 10;
+      const duration = Math.random() * 15 + 10; // 3s to 8s
       bulle.style.animationDuration = duration + "s";
 
       // Random Delay
