@@ -53,7 +53,7 @@
       color: var(--white);
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items:center;
       height: 100vh;
       position: relative; /* Needed for absolute positioning of children */
     }
@@ -72,6 +72,21 @@
         var(--color3) 0 0 7rem inset;
       z-index: 10; /* Ensure content is above bubbles */
       position: relative;
+    }
+    .message{
+      animation: header 2s ease-in-out;
+    }
+    @keyframes header {
+      0%,100%{
+        top: -2rem;
+      }
+      10%,70%{
+        top: 1rem;
+      }
+    }
+    .header{
+      position: absolute;
+      top: -1rem;
     }
     h1 {
       color:#ff6060;
@@ -147,6 +162,7 @@
     }
   </style>
   <body>
+    <div id="header" class="header">header</div>
     <div class="container">
       <h1>Veut tu etre ma valentine ?</h1>
       <section>
@@ -162,21 +178,29 @@
   </body>
   <script>
     const btn = document.getElementById("button");
+    const msg = document.getElementById('header');
     const container = document.querySelector(".container");
 
-    // Make the button run away
-    btn.addEventListener("mouseover", moveButton);
+    const messages = ['Oh oh… presque !','Pas si vite','T\'es sûre de ce choix ?','Recalcul en cours…','Accès refusé','Derniere chance']
+
     btn.addEventListener("click", moveButton); // Also move on click if they manage to catch it
 
     function moveButton() {
-      // Add absolute positioning class if not present to allow free movement
+
+      if(messages.length !== 0){
+        msg.textContent = messages[0]  
+        messages.splice(0,1)
+      }
+      else{
+        msg.textContent = 'sawa tu '
+      }
+      
+
+      msg.classList.add('message')
+      // msg.style.animation = 'header 2s ease-in-out'
+      setTimeout(()=> msg.classList.remove('message'),2000)
       if (!btn.classList.contains("hover")) {
         btn.classList.add("hover");
-        // Move it out of the layout flow initially so it doesn't jump weirdly
-        // We append it to body so it can move anywhere on screen freely,
-        // or keep in container but use fixed positioning relative to viewport.
-        // Keeping in section might restrict it if we use percentages.
-        // Let's keep it simple: relative movement within viewport.
         btn.style.position = "fixed";
       }
 
@@ -225,6 +249,6 @@
         (duration + 2) * 1000,
       ); // Wait for duration + delay
     };
-    setInterval(prodBulles, 1000);
+    setInterval(prodBulles, 800);
   </script>
 </html>
