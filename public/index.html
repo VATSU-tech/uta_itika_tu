@@ -125,7 +125,7 @@
       left: 0;
       right: 0;
       padding: 0 0.5rem;
-      animation: scrollDown 40s linear forwards;
+      animation: scrollUp 40s linear forwards;
     }
     .scroll-text p {
       margin-bottom: 1.25rem;
@@ -225,12 +225,12 @@
         opacity: 0;
       }
     }
-    @keyframes scrollDown {
+    @keyframes scrollUp {
       0% {
-        transform: translateY(-100%);
+        transform: translateY(100%);
       }
       100% {
-        transform: translateY(110%);
+        transform: translateY(-120%);
       }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -247,16 +247,16 @@
           <h1>Un petit message pour toi</h1>
           <div class="scroll-window">
             <div class="scroll-text" id="scrollText">
-              <p>Écris ici ton long message. Il va défiler doucement vers le bas.</p>
+              <p>Écris ici ton long message. Il va défiler doucement de bas en haut.</p>
               <p>Tu peux ajouter plusieurs paragraphes pour raconter ce que tu veux.</p>
               <p>Quand le texte arrive à la fin, la question d’autorisation apparaît.</p>
               <p>Ce bloc est un exemple. Remplace-le par ton vrai texte.</p>
               <p>Merci d’être là. Ce moment compte pour moi.</p>
+              <div class="cta" id="pausePoint">
+                <span>Je peux te poser une question ?</span>
+                <button id="startQuestion">Oui</button>
+              </div>
             </div>
-          </div>
-          <div class="cta" id="cta" hidden>
-            <span>Je peux te poser une question ?</span>
-            <button id="startQuestion">Oui</button>
           </div>
         </div>
       </section>
@@ -321,7 +321,8 @@
     const messageSection = document.getElementById("message");
     const questionSection = document.getElementById("question");
     const scrollText = document.getElementById("scrollText");
-    const cta = document.getElementById("cta");
+    const pausePoint = document.getElementById("pausePoint");
+    const scrollWindow = document.querySelector(".scroll-window");
     const startQuestion = document.getElementById("startQuestion");
 
     const messages = ['Fais pas cet erreur','Derniere chance','C\'est pas bien ca']
@@ -384,12 +385,23 @@
     };
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (prefersReducedMotion.matches) {
-      cta.hidden = false;
-    } else {
-      scrollText.addEventListener("animationend", () => {
-        cta.hidden = false;
-      });
+    if (!prefersReducedMotion.matches) {
+      let paused = false;
+      const checkPause = () => {
+        if (paused) return;
+        const windowRect = scrollWindow.getBoundingClientRect();
+        const pointRect = pausePoint.getBoundingClientRect();
+        const windowMid = windowRect.top + windowRect.height / 2;
+        const pointMid = pointRect.top + pointRect.height / 2;
+        const distance = Math.abs(pointMid - windowMid);
+        if (distance < 12) {
+          scrollText.style.animationPlayState = "paused";
+          paused = true;
+          return;
+        }
+        requestAnimationFrame(checkPause);
+      };
+      requestAnimationFrame(checkPause);
     }
 
     startQuestion.addEventListener("click", () => {
