@@ -238,6 +238,9 @@
         position: static;
         animation: none;
       }
+      .scroll-window {
+        overflow: auto;
+      }
     }
   </style>
   <body>
@@ -393,8 +396,7 @@
         const pointRect = pausePoint.getBoundingClientRect();
         const windowMid = windowRect.top + windowRect.height / 2;
         const pointMid = pointRect.top + pointRect.height / 2;
-        const distance = Math.abs(pointMid - windowMid);
-        if (distance < 12) {
+        if (pointMid <= windowMid) {
           scrollText.style.animationPlayState = "paused";
           paused = true;
           return;
