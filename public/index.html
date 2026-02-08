@@ -10,6 +10,12 @@
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-TileColor" content="var(--background)" />
     <meta name="msapplication-TileImage" content="icon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;700&family=Playfair+Display:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="icon" href="" id="pageIcon" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,16 +34,8 @@
       margin: 0;
       box-sizing: border-box;
       font-family:
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
+        "Manrope",
         "Segoe UI",
-        Roboto,
-        Oxygen,
-        Ubuntu,
-        Cantarell,
-        "Open Sans",
-        "Helvetica Neue",
         sans-serif;
         font-size: calc(.8rem + 1vw);
       transition: 0.5s;
@@ -54,13 +52,31 @@
     }
     body {
       overflow: hidden;
-      background-color: var(--background);
+      background:
+        radial-gradient(circle at 20% 10%, #ffd6d6 0%, transparent 45%),
+        radial-gradient(circle at 80% 20%, #ff8b8b 0%, transparent 40%),
+        var(--background);
       color: var(--white);
       display: flex;
       justify-content: center;
       align-items:center;
       height: 100vh;
       position: relative; /* Needed for absolute positioning of children */
+    }
+    main {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+    }
+    .view {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+    .view[hidden] {
+      display: none !important;
     }
     .container {
       display: flex;
@@ -79,6 +95,48 @@
       z-index: 10; /* Ensure content is above bubbles */
       position: relative;
     }
+    .message-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      width: min(900px, 92vw);
+      background-color: transparent;
+      color: var(--white);
+      padding: 2rem;
+      border-radius: 2rem;
+      text-align: center;
+      box-shadow:
+        var(--color2) 0 0 50rem,
+        var(--white) 5px 5px 1rem,
+        var(--color3) 0 0 7rem inset;
+      z-index: 10;
+      position: relative;
+    }
+    .scroll-window {
+      position: relative;
+      height: min(55vh, 480px);
+      overflow: hidden;
+      border-radius: 1.5rem;
+      padding: 1rem;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+    }
+    .scroll-text {
+      position: absolute;
+      left: 0;
+      right: 0;
+      padding: 0 0.5rem;
+      animation: scrollDown 40s linear forwards;
+    }
+    .scroll-text p {
+      margin-bottom: 1.25rem;
+      line-height: 1.6;
+    }
+    .cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
     .message{
       animation: header 2s ease-in-out;
     }
@@ -95,6 +153,7 @@
       top: -10rem;
     }
     h1 {
+      font-family: "Playfair Display", serif;
       color:var(--color2);
       animation: fadenRed 2s ease-in-out infinite;
     }
@@ -166,15 +225,42 @@
         opacity: 0;
       }
     }
+    @keyframes scrollDown {
+      0% {
+        transform: translateY(-100%);
+      }
+      100% {
+        transform: translateY(110%);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .scroll-text {
+        position: static;
+        animation: none;
+      }
+    }
   </style>
   <body>
     <main>
-      <!-- <section id="texte">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore ipsam aperiam quo excepturi alias recusandae obcaecati fuga. Quasi dolor non fugit? Cupiditate mollitia at, quo ipsum obcaecati laborum unde provident?
-        Iure odit soluta enim asperiores dolor quidem adipisci fugit placeat, neque eaque, quos pariatur cum expedita culpa tenetur labore consectetur? Provident nobis veniam ipsa odio, quod saepe neque debitis beatae.
-        Voluptas nam laudantium ipsum cumque odit, nulla facere ratione quia odio suscipit perspiciatis quasi in? Fugit fugiat, reprehenderit possimus, dignissimos minus provident repudiandae quis iure atque magni, hic veniam a.</p>
-      </section> -->
-      <section id="question">
+      <section id="message" class="view">
+        <div class="message-panel">
+          <h1>Un petit message pour toi</h1>
+          <div class="scroll-window">
+            <div class="scroll-text" id="scrollText">
+              <p>Écris ici ton long message. Il va défiler doucement vers le bas.</p>
+              <p>Tu peux ajouter plusieurs paragraphes pour raconter ce que tu veux.</p>
+              <p>Quand le texte arrive à la fin, la question d’autorisation apparaît.</p>
+              <p>Ce bloc est un exemple. Remplace-le par ton vrai texte.</p>
+              <p>Merci d’être là. Ce moment compte pour moi.</p>
+            </div>
+          </div>
+          <div class="cta" id="cta" hidden>
+            <span>Je peux te poser une question ?</span>
+            <button id="startQuestion">Oui</button>
+          </div>
+        </div>
+      </section>
+      <section id="question" class="view" hidden>
         <div id="header" class="header">header</div>
         <div class="container">
           <h1 id="q">Veut tu etre ma valentine ?</h1>
@@ -232,6 +318,11 @@
     let noCompteur = 0;
     let srcIcon = 'icon'
     const container = document.querySelector(".container");
+    const messageSection = document.getElementById("message");
+    const questionSection = document.getElementById("question");
+    const scrollText = document.getElementById("scrollText");
+    const cta = document.getElementById("cta");
+    const startQuestion = document.getElementById("startQuestion");
 
     const messages = ['Fais pas cet erreur','Derniere chance','C\'est pas bien ca']
 
@@ -280,7 +371,30 @@
 
     const audion = new Audio('audio.mp3');
     audion.volume = 0.2;
-      audion.play();
+    audion.loop = true;
+    const tryPlayAudio = () => {
+      audion.play().catch(() => {});
+    };
+    tryPlayAudio();
+    document.addEventListener("pointerdown", tryPlayAudio, { once: true });
+
+    const showQuestion = () => {
+      messageSection.hidden = true;
+      questionSection.hidden = false;
+    };
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (prefersReducedMotion.matches) {
+      cta.hidden = false;
+    } else {
+      scrollText.addEventListener("animationend", () => {
+        cta.hidden = false;
+      });
+    }
+
+    startQuestion.addEventListener("click", () => {
+      showQuestion();
+    });
 
     const prodBulles = (src) => {
       const bulle = document.createElement("img");
