@@ -10,7 +10,7 @@
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-TileColor" content="var(--background)" />
     <meta name="msapplication-TileImage" content="icon.svg" />
-    <link rel="icon" href="icon.svg" />
+    <link rel="icon" href="" id="pageIcon" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
@@ -20,7 +20,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <title>uta itika tu</title>
+    <title id="title" > uta itika tu</title>
   </head>
   <style>
     * {
@@ -173,7 +173,7 @@
         <h1 id="q">Veut tu etre ma valentine ?</h1>
         <section>
           <button id="yes" onclick='send("yes","Merci 💘",noCompteur)' >Yes</button>
-          <button id="button" ">No</button>
+          <button id="button">No</button>
         </section>
       </div>
     </main>
@@ -186,7 +186,7 @@
     <script>
       const p = new URLSearchParams(location.search);
       const to = p.get("to") || "Valentine";
-      const from = p.get("from") || "Quelqu’un";
+      const from = p.get("num") || "Quelqu’un";
       document.getElementById("q").innerHTML =
         `<span class='to'>${to}</span>` + ", veux-tu être ma Valentine ?";
 
@@ -195,8 +195,29 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ to, from, answer,noCompt }),
-        }).then(() => (document.querySelector('.container').innerHTML = "<h2 style='color:var(--whire)'>"+message+"</h2>"));
+        }).then(() => {
+          document.querySelector('.container').innerHTML = `<h2 style='color:var(--whire)'>${message}</h2>
+          <p><a href='https://wa.me/${from}?text=${answer}' target='_blank'><button style='width:15rem'>Envoyer sur Whatsap</button></a></p>
+          `
+        });
       }
+
+      // btn.addEventListener('click',()=>{navigator.sendBeacon(
+      //     "/api/response",
+      //     JSON.stringify({ to, from, answer:'quitter',noCompt }),
+      //   );}
+      // )
+
+      // window.addEventListener("beforeunload", () => {
+      //   navigator.sendBeacon(
+      //     "/api/response",
+      //     JSON.stringify({ to, from, answer:'quitter',noCompt }),
+      //   );
+      // });
+
+      pageIcon.href ='icon.svg'
+      document.getElementById('title').textContent =  to
+
     const btn = document.getElementById("button");
     const msg = document.getElementById('header');
     const root = document.documentElement;
@@ -216,12 +237,15 @@
         console.log(messages);
       }
       else{
-        srcIcon = 'broken'
-        send('no','Tu me rend vraiment triste','acha katala')
         root.style.setProperty('--background', '#1f1f1f')
         root.style.setProperty('--color2','#1a1a1a');
         root.style.setProperty('--color3','#313131')
         root.style.setProperty('--white','#afafaf')
+        srcIcon = 'broken'
+        pageIcon.href ='broken.svg'
+        send('no','Tu me rend vraiment triste','acha katala')
+        document.getElementById('title').textContent  = `tu me rend triste
+          <p><a href='https://wa.me/${from}?text=${answer}' target='_blank'><button style='width=15rem'>Envoyer sur Whatsap</button></a></p>`
       }
       
 
