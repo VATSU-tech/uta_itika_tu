@@ -39,6 +39,7 @@
         "Open Sans",
         "Helvetica Neue",
         sans-serif;
+        font-size: calc(.8rem + 1vw);
       transition: 0.5s;
     }
     :root {
@@ -106,7 +107,7 @@
       }
       
     }
-    section {
+    .section {
       display: flex;
       gap: 10px;
       padding: 0 20%;
@@ -168,14 +169,21 @@
   </style>
   <body>
     <main>
-      <div id="header" class="header">header</div>
-      <div class="container">
-        <h1 id="q">Veut tu etre ma valentine ?</h1>
-        <section>
-          <button id="yes" onclick='send("yes","Merci 💘",noCompteur)' >Yes</button>
-          <button id="button">No</button>
-        </section>
-      </div>
+      <!-- <section id="texte">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore ipsam aperiam quo excepturi alias recusandae obcaecati fuga. Quasi dolor non fugit? Cupiditate mollitia at, quo ipsum obcaecati laborum unde provident?
+        Iure odit soluta enim asperiores dolor quidem adipisci fugit placeat, neque eaque, quos pariatur cum expedita culpa tenetur labore consectetur? Provident nobis veniam ipsa odio, quod saepe neque debitis beatae.
+        Voluptas nam laudantium ipsum cumque odit, nulla facere ratione quia odio suscipit perspiciatis quasi in? Fugit fugiat, reprehenderit possimus, dignissimos minus provident repudiandae quis iure atque magni, hic veniam a.</p>
+      </section> -->
+      <section id="question">
+        <div id="header" class="header">header</div>
+        <div class="container">
+          <h1 id="q">Veut tu etre ma valentine ?</h1>
+          <div class="section">
+            <button id="yes" onclick='send("yes","Merci 💘",noCompteur)' >Yes</button>
+            <button id="button">No</button>
+          </div>
+        </div>
+      </section>
     </main>
     <footer>
       <a href="https://github.com/VATSU-tech/uta_itika_tu.git"
@@ -215,8 +223,8 @@
       //   );
       // });
 
-      pageIcon.href ='icon.svg'
-      document.getElementById('title').textContent =  to
+    pageIcon.href ='icon.svg'
+    document.getElementById('title').textContent =  to
 
     const btn = document.getElementById("button");
     const msg = document.getElementById('header');
@@ -270,21 +278,23 @@
       }
     });
 
+    const audion = new Audio('audio.mp3');
+    audion.volume = 0.2;
+      audion.play();
+
     const prodBulles = (src) => {
       const bulle = document.createElement("img");
       bulle.src = `/${src}.svg`
       bulle.alt = src
       bulle.classList.add("bulle");
 
-      // Random Size
-      const size = Math.random() * 50 + 20 + "px"; // 20px to 70px
+      const size = Math.random() * 50 + 20 + "px"; 
       bulle.style.width = size;
-      bulle.style.height = size; // maintain aspect ratio if square svg
+      bulle.style.height = size;
 
       bulle.style.left = Math.random() * 100 + "%";
 
-      // Random Animation Duration (Speed)
-      const duration = Math.random() * 15 + 10; // 3s to 8s
+      const duration = Math.random() * 15 + 10; 
       bulle.style.animationDuration = duration + "s";
 
       // Random Delay
