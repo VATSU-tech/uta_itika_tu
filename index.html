@@ -176,23 +176,30 @@
       >
     </footer>
   </body>
-  <script>
-    const btn = document.getElementById("button");
+  <script>const btn = document.getElementById("button");
     const msg = document.getElementById('header');
+    const root = document.documentElement;
+    let srcIcon = '/icon.svg'
     const container = document.querySelector(".container");
 
-    const messages = ['Oh oh… presque !','Pas si vite','T\'es sûre de ce choix ?','Recalcul en cours…','Accès refusé','Derniere chance']
+    const messages = ['Fais pas cet erreur','Derniere chance','C\'est pas bien ca']
 
     btn.addEventListener("click", moveButton); // Also move on click if they manage to catch it
 
+    let it = 0
     function moveButton() {
-
-      if(messages.length !== 0){
+      if(it < 2){
+        it ++;
         msg.textContent = messages[0]  
         messages.splice(0,1)
+        console.log(messages);
       }
       else{
-        msg.textContent = 'sawa tu '
+        send('no','Tu me rend vraiment triste')
+        root.style.setProperty('--background', '#1f1f1f')
+        root.style.setProperty('--color2','#1a1a1a');
+        root.style.setProperty('--color3','#313131')
+        root.style.setProperty('--white','#afafaf')
       }
       
 
@@ -212,17 +219,14 @@
     }
 
     document.getElementById("yes").addEventListener("click", () => {
-      document.querySelector(".container").innerHTML =
-        "<h1>Thank you to love me realy !</h1>";
-      // Maybe trigger a burst of bubbles?
       for (let i = 0; i < 50; i++) {
-        setTimeout(prodBulles, i * 50);
+        setTimeout(()=>prodBulles('/love.svg'), i * 30);
       }
     });
 
-    const prodBulles = () => {
+    const prodBulles = (src) => {
       const bulle = document.createElement("img");
-      bulle.src = "/icon.svg";
+      bulle.src = src
       bulle.classList.add("bulle");
 
       // Random Size
@@ -249,6 +253,7 @@
         (duration + 2) * 1000,
       ); // Wait for duration + delay
     };
-    setInterval(prodBulles, 800);
-  </script>
+    setInterval(()=>prodBulles(srcIcon), 800);
+    </script>
+  </body>
 </html>

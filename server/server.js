@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const PORT = 3001;
+const PORT = 3000;
 const DATA_FILE = path.join(__dirname, "responses.json");
 
 app.use(express.json());
@@ -14,7 +14,7 @@ if (!fs.existsSync(DATA_FILE)) {
 }
 
 app.post("/api/respond", (req, res) => {
-  const { to, from, answer } = req.body;
+  const { to, from, answer,noCompt } = req.body;
   if (!to || !answer) {
     return res.status(400).json({ error: "Invalid data" });
   }
@@ -23,8 +23,11 @@ app.post("/api/respond", (req, res) => {
   data[to] = {
     from,
     answer,
+    noCompt,
     date: new Date().toISOString()
   };
+
+  console.log(data[to])
 
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
   res.json({ success: true });

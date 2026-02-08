@@ -42,7 +42,11 @@
       transition: 0.5s;
     }
     :root {
-      --background: #ffb8b8;
+      /* --background: #1f1f1f;
+      --color2: #1a1a1a;
+      --color3: #313131;
+      --white: #414141; */
+     --background: #ffb8b8;
       --color2: #ff6767;
       --color3: #ff000075;
       --white: #ff0000;
@@ -62,6 +66,7 @@
       flex-direction: column;
       gap: 1rem;
       background-color: transparent;
+      color: var(--white);
       padding: 2rem;
       border-radius: 2rem;
       text-align: center;
@@ -86,10 +91,10 @@
     }
     .header{
       position: absolute;
-      top: -1rem;
+      top: -10rem;
     }
     h1 {
-      color:#ff6060;
+      color:var(--color2);
       animation: fadenRed 2s ease-in-out infinite;
     }
     @keyframes fadenRed {
@@ -97,7 +102,7 @@
       text-shadow: #dee 0 0 5px;
       }
       50%{
-      text-shadow: #ff6060 0 0 1px;
+      text-shadow: var(--color3) 0 0 1px;
       }
       
     }
@@ -162,14 +167,16 @@
     }
   </style>
   <body>
-    <div id="header" class="header">header</div>
-    <div class="container">
-      <h1 id="q">Veut tu etre ma valentine ?</h1>
-      <section>
-        <button id="yes" onclick='send("yes","Merci 💘")' >Yes</button>
-        <button id="button" ">No</button>
-      </section>
-    </div>
+    <main>
+      <div id="header" class="header">header</div>
+      <div class="container">
+        <h1 id="q">Veut tu etre ma valentine ?</h1>
+        <section>
+          <button id="yes" onclick='send("yes","Merci 💘",noCompteur)' >Yes</button>
+          <button id="button" ">No</button>
+        </section>
+      </div>
+    </main>
     <footer>
       <a href="https://github.com/VATSU-tech/uta_itika_tu.git"
         ><i class="fa-brands fa-github"></i> VATSU-tech</a
@@ -183,31 +190,38 @@
       document.getElementById("q").innerHTML =
         `<span class='to'>${to}</span>` + ", veux-tu être ma Valentine ?";
 
-      function send(answer,message) {
+      function send(answer,message,noCompt) {
         fetch("/api/respond", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ to, from, answer }),
-        }).then(() => (document.querySelector('.container').innerHTML = "<h2>"+message+"</h2>"));
+          body: JSON.stringify({ to, from, answer,noCompt }),
+        }).then(() => (document.querySelector('.container').innerHTML = "<h2 style='color:var(--whire)'>"+message+"</h2>"));
       }
     const btn = document.getElementById("button");
     const msg = document.getElementById('header');
     const root = document.documentElement;
+    let noCompteur = 0;
+    let srcIcon = 'icon'
     const container = document.querySelector(".container");
 
-    const messages = ['Fais pas cet erreur','Derniere chance']
+    const messages = ['Fais pas cet erreur','Derniere chance','C\'est pas bien ca']
 
     btn.addEventListener("click", moveButton); // Also move on click if they manage to catch it
 
     function moveButton() {
-
       if(messages.length !== 0){
+        noCompteur ++;
         msg.textContent = messages[0]  
         messages.splice(0,1)
+        console.log(messages);
       }
       else{
-        send('no','Tu me rend vraiment triste')
-        root.style.setProperty('--background', '#444')
+        srcIcon = 'broken'
+        send('no','Tu me rend vraiment triste','acha katala')
+        root.style.setProperty('--background', '#1f1f1f')
+        root.style.setProperty('--color2','#1a1a1a');
+        root.style.setProperty('--color3','#313131')
+        root.style.setProperty('--white','#afafaf')
       }
       
 
@@ -227,17 +241,15 @@
     }
 
     document.getElementById("yes").addEventListener("click", () => {
-      document.querySelector(".container").innerHTML =
-        "<h1>Thank you to love me realy !</h1>";
-      // Maybe trigger a burst of bubbles?
       for (let i = 0; i < 50; i++) {
-        setTimeout(prodBulles, i * 50);
+        setTimeout(()=>prodBulles('love'), i * 30);
       }
     });
 
-    const prodBulles = () => {
+    const prodBulles = (src) => {
       const bulle = document.createElement("img");
-      bulle.src = "/icon.svg";
+      bulle.src = `/${src}.svg`
+      bulle.alt = src
       bulle.classList.add("bulle");
 
       // Random Size
@@ -264,7 +276,7 @@
         (duration + 2) * 1000,
       ); // Wait for duration + delay
     };
-    setInterval(prodBulles, 800);
+    setInterval(()=>prodBulles(srcIcon), 800);
     </script>
   </body>
 </html>
