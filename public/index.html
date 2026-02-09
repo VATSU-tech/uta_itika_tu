@@ -284,19 +284,38 @@
     <script>
       const p = new URLSearchParams(location.search);
       const to = p.get("to") || "Valentine";
-      const from = p.get("num") || "Quelqu’un";
+      const fromEmail = p.get("email") || "";
+      const whatsapp = p.get("num") || "";
       document.getElementById("q").innerHTML =
         `<span class='to'>${to}</span>` + ", veux-tu être ma Valentine ?";
 
-      function send(answer,message,noCompt) {
+      if (!fromEmail) {
+        console.warn("Paramètre email manquant: ajoute ?email=ton@email.com");
+      }
+
+      let hasResponded = false;
+      let exitSent = false;
+
+      function send(answer, message, noCompt, reason) {
+        if (hasResponded) return;
+        hasResponded = true;
+        const payload = { to, fromEmail, answer, noCompt, reason };
         fetch("/api/respond", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ to, from, answer,noCompt }),
+          body: JSON.stringify(payload),
         }).then(() => {
-          document.querySelector('.container').innerHTML = `<h2 style='color:var(--whire)'>${message}</h2>
-          <p><a href='https://wa.me/${from}?text=${answer}' target='_blank'><button style='width:15rem'>Envoyer sur Whatsap</button></a></p>
-          `
+          const emailNote = fromEmail
+            ? "Ta réponse a été envoyée par email."
+            : "Ta réponse a été enregistrée.";
+          const whatsappLink = whatsapp
+            ? `<p><a href='https://wa.me/${whatsapp}?text=${encodeURIComponent(answer)}' target='_blank'><button style='width:15rem'>Envoyer sur WhatsApp</button></a></p>`
+            : "";
+          document.querySelector(".container").innerHTML = `
+            <h2 style='color:var(--white)'>${message}</h2>
+            <p>${emailNote}</p>
+            ${whatsappLink}
+          `;
         });
       }
 
@@ -348,8 +367,7 @@
         srcIcon = 'broken'
         pageIcon.href ='broken.svg'
         send('no','Tu me rend vraiment triste','acha katala')
-        document.getElementById('title').textContent  = `tu me rend triste
-          <p><a href='https://wa.me/${from}?text=${answer}' target='_blank'><button style='width=15rem'>Envoyer sur Whatsap</button></a></p>`
+        document.getElementById('title').textContent  = 'tu me rend triste'
       }
       
 
@@ -371,6 +389,27 @@
     document.getElementById("yes").addEventListener("click", () => {
       for (let i = 0; i < 50; i++) {
         setTimeout(()=>prodBulles('love'), i * 30);
+      }
+    });
+
+    const sendExit = () => {
+      if (hasResponded || exitSent) return;
+      exitSent = true;
+      const payload = {
+        to,
+        fromEmail,
+        answer: "exit",
+        noCompt: noCompteur,
+        reason: "La personne a quitté la page sans répondre.",
+      };
+      const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+      navigator.sendBeacon("/api/respond", blob);
+    };
+
+    window.addEventListener("pagehide", sendExit);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") {
+        sendExit();
       }
     });
 
